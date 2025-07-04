@@ -48,8 +48,8 @@ public class WarehouseServiceImpl implements WarehouseService {
     public Optional<WarehouseDto> updateWarehouse(UpdateWarehouseDto warehouseDto) {
         return warehouseRepository.findById(warehouseDto.getId())
                 .map(existingWarehouse -> {
-                    existingWarehouse.setName(warehouseDto.getName());
-                    existingWarehouse.setIdentifier(warehouseDto.getIdentifier());
+                    existingWarehouse.setWarehouse_name(warehouseDto.getWarehouse_name());
+                    existingWarehouse.setWarehouse_identifier(warehouseDto.getWarehouse_identifier());
                     existingWarehouse.setUpdated(dateTimeService.now());
 
                     var savedCustomer = warehouseRepository.save(existingWarehouse);
