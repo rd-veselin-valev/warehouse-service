@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: you
+      changes:
+        - createTable:
+            tableName: warehouse
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+              - column:
+                  name: identifier
+                  type: VARCHAR(16)
+              - column:
+                  name: created
+                  type: TIMESTAMP(6)
+              - column:
+                  name: updated
+                  type: TIMESTAMP(6)

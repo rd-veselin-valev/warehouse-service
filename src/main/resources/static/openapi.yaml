@@ -1,0 +1,141 @@
+openapi: 3.0.3
+info:
+  title: Warehouse service API
+  version: 1.0.0
+  description: API for managing warehouses
+
+tags:
+  - name: Warehouses
+    description: Operations related to warehouse
+
+paths:
+  /api/warehouses:
+    get:
+      summary: Get all warehouses
+      tags:
+        - Warehouses
+      responses:
+        '200':
+          description: A list of warehouses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WarehouseDto'
+    post:
+      summary: Create a new warehouse
+      tags:
+        - Warehouses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWarehouseDto'
+      responses:
+        '201':
+          description: Warehouse created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseDto'
+    put:
+      summary: Update a Warehouse
+      tags:
+        - Warehouses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWarehouseDto'
+      responses:
+        '200':
+          description: Warehouse updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseDto'
+        '404':
+          description: Warehouse not found
+
+  /api/warehouses/{id}:
+    get:
+      summary: Get a warehouse by ID
+      tags:
+        - Warehouses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Warehouse found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseDto'
+        '404':
+          description: Warehouse not found
+    delete:
+      summary: Delete a warehouse by ID
+      tags:
+        - Warehouses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Warehouse deleted
+        '404':
+          description: Warehouse not found
+
+components:
+  schemas:
+    WarehouseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Warehouse name
+        identifier:
+          type: string
+          example: Warehouse identifier
+        created:
+          type: string
+          format: dateTime
+          example: "2025-07-02 14:30:45"
+        updated:
+          type: string
+          format: dateTime
+          example: "2025-07-02 14:30:45"
+    CreateWarehouseDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Warehouse name
+        identifier:
+          type: string
+          example: Warehouse identifier
+    UpdateWarehouseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Warehouse name
+        identifier:
+          type: string
+          example: Warehouse identifier
