@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class Warehouse extends BaseEntity {
-    private String warehouse_name;
+    private String warehouseName;
 
-    private String warehouse_identifier;
+    private String warehouseIdentifier;
 }

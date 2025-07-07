@@ -6,6 +6,7 @@ import com.example.warehouse_service.dto.WarehouseDto;
 import com.example.warehouse_service.service.WarehouseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,14 +20,14 @@ public class WarehouseController {
     private final WarehouseService warehouseService;
 
     @GetMapping
-    public ResponseEntity<List<WarehouseDto>> getWarehouses() {
-        return ResponseEntity.ok(warehouseService.getWarehouses());
+    public ResponseEntity<List<WarehouseDto>> getWarehouses(Pageable pageable) {
+        return ResponseEntity.ok(warehouseService.getWarehouses(pageable));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<WarehouseDto> getWarehouseById(@PathVariable int id) {
         var warehouse = warehouseService.getWarehouseById(id);
-        return warehouse.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(warehouse);
     }
 
     @PostMapping
@@ -39,13 +40,12 @@ public class WarehouseController {
     @PutMapping
     public ResponseEntity<WarehouseDto> updateWarehouse(@RequestBody @Valid UpdateWarehouseDto WarehouseDto) {
         var warehouse = warehouseService.updateWarehouse(WarehouseDto);
-        return warehouse.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(warehouse);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWarehouse(@PathVariable int id) {
-        return warehouseService.deleteWarehouse(id) ?
-                ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        warehouseService.deleteWarehouse(id);
+        return ResponseEntity.noContent().build();
     }
 }

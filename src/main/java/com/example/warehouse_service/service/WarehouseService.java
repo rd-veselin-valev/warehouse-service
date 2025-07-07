@@ -4,18 +4,18 @@ import com.example.warehouse_service.dto.CreateWarehouseDto;
 import com.example.warehouse_service.dto.UpdateWarehouseDto;
 import com.example.warehouse_service.dto.WarehouseDto;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface WarehouseService {
-    List<WarehouseDto> getWarehouses();
+    List<WarehouseDto> getWarehouses(Pageable pageable);
 
-    Optional<WarehouseDto> getWarehouseById(int id);
+    WarehouseDto getWarehouseById(int id);
 
     WarehouseDto createWarehouse(@Valid CreateWarehouseDto warehouseDto);
 
-    Optional<WarehouseDto> updateWarehouse(@Valid UpdateWarehouseDto warehouseDto);
+    WarehouseDto updateWarehouse(@Valid UpdateWarehouseDto warehouseDto);
 
-    boolean deleteWarehouse(int id);
+    void deleteWarehouse(int id);
 }
