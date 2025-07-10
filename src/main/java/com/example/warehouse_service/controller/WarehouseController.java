@@ -5,6 +5,7 @@ import com.example.warehouse_service.dto.UpdateWarehouseDto;
 import com.example.warehouse_service.dto.WarehouseDto;
 import com.example.warehouse_service.service.WarehouseService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class WarehouseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WarehouseDto> getWarehouseById(@PathVariable int id) {
+    public ResponseEntity<WarehouseDto> getWarehouseById(@PathVariable @Positive int id) {
         var warehouse = warehouseService.getWarehouseById(id);
         return ResponseEntity.ok(warehouse);
     }
@@ -37,14 +38,14 @@ public class WarehouseController {
         return ResponseEntity.created(location).body(warehouse);
     }
 
-    @PutMapping
-    public ResponseEntity<WarehouseDto> updateWarehouse(@RequestBody @Valid UpdateWarehouseDto WarehouseDto) {
-        var warehouse = warehouseService.updateWarehouse(WarehouseDto);
+    @PutMapping("/{id}")
+    public ResponseEntity<WarehouseDto> updateWarehouse(@PathVariable @Positive int id, @RequestBody @Valid UpdateWarehouseDto WarehouseDto) {
+        var warehouse = warehouseService.updateWarehouse(id, WarehouseDto);
         return ResponseEntity.ok(warehouse);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteWarehouse(@PathVariable int id) {
+    public ResponseEntity<Void> deleteWarehouse(@PathVariable @Positive int id) {
         warehouseService.deleteWarehouse(id);
         return ResponseEntity.noContent().build();
     }

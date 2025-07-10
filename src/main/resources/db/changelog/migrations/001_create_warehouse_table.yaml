@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
-      author: you
+      id: 001_create_warehouse_table
+      author: Veselin Valev
       changes:
         - createTable:
             tableName: warehouse

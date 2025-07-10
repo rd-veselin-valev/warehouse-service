@@ -1,11 +1,13 @@
 package com.example.warehouse_service.service.impl;
 
+import com.example.warehouse_service.data.entity.Warehouse;
 import com.example.warehouse_service.data.repository.WarehouseRepository;
 import com.example.warehouse_service.dto.CreateWarehouseDto;
 import com.example.warehouse_service.dto.UpdateWarehouseDto;
 import com.example.warehouse_service.dto.WarehouseDto;
 import com.example.warehouse_service.mapper.WarehouseMapper;
 import com.example.warehouse_service.service.WarehouseService;
+import com.example.warehouse_service.util.errormessage.ErrorMessages;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -29,13 +31,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public WarehouseDto getWarehouseById(int id) {
-        var warehouse = warehouseRepository.findById(id);
-
-        if (warehouse.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Warehouse with id %d not found", id));
-        }
-
-        return mapper.toWarehouseDto(warehouse.get());
+        return mapper.toWarehouseDto(getWarehouses(id));
     }
 
     @Override
@@ -45,27 +41,25 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    public WarehouseDto updateWarehouse(UpdateWarehouseDto warehouseDto) {
-        var warehouse = warehouseRepository.findById(warehouseDto.getId());
+    public WarehouseDto updateWarehouse(int id, UpdateWarehouseDto warehouseDto) {
+        var warehouse = getWarehouses(id);
+        warehouse.setWarehouseName(warehouseDto.getWarehouseName());
+        warehouse.setWarehouseIdentifier(warehouseDto.getWarehouseIdentifier());
 
-        if (warehouse.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Warehouse with id %d not found", warehouseDto.getId()));
-        }
-
-        var existingWarehouse = warehouse.get();
-            existingWarehouse.setWarehouseName(warehouseDto.getWarehouseName());
-            existingWarehouse.setWarehouseIdentifier(warehouseDto.getWarehouseIdentifier());
-
-        var savedCustomer = warehouseRepository.save(existingWarehouse);
-        return mapper.toWarehouseDto(savedCustomer);
+        return mapper.toWarehouseDto(warehouseRepository.save(warehouse));
     }
 
     @Override
     public void deleteWarehouse(int id) {
         if (!warehouseRepository.existsById(id)) {
-            throw new EntityNotFoundException("Warehouse not found");
+            throw new EntityNotFoundException(String.format(ErrorMessages.WAREHOUSE_NOT_FOUND, id));
         }
 
         warehouseRepository.deleteById(id);
+    }
+
+    private Warehouse getWarehouses(int id) {
+        return warehouseRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format(ErrorMessages.WAREHOUSE_NOT_FOUND, id)));
     }
 }
