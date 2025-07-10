@@ -12,13 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateWarehouseDto {
-    private int id;
-
-    @NotBlank(message = "WarehouseName is required")
-    @Size(max = 50, message = "WarehouseName can't exceed 50 characters")
+    @NotBlank()
+    @Size(max = 50)
     private String warehouseName;
 
-    @NotBlank(message = "WarehouseIdentifier is required")
-    @Size(max = 16, message = "WarehouseIdentifier can't exceed 16 characters")
+    @NotBlank()
+    @Size(max = 16)
     private String warehouseIdentifier;
 }
