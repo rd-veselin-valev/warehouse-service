@@ -32,15 +32,15 @@ public class WarehouseController {
     }
 
     @PostMapping
-    public ResponseEntity<WarehouseDto> createWarehouse(@RequestBody @Valid CreateWarehouseDto WarehouseDto) {
-        var warehouse = warehouseService.createWarehouse(WarehouseDto);
+    public ResponseEntity<WarehouseDto> createWarehouse(@RequestBody @Valid CreateWarehouseDto warehouseDto) {
+        var warehouse = warehouseService.createWarehouse(warehouseDto);
         URI location = URI.create("/api/warehouses/" + warehouse.getId());
         return ResponseEntity.created(location).body(warehouse);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<WarehouseDto> updateWarehouse(@PathVariable @Positive int id, @RequestBody @Valid UpdateWarehouseDto WarehouseDto) {
-        var warehouse = warehouseService.updateWarehouse(id, WarehouseDto);
+    public ResponseEntity<WarehouseDto> updateWarehouse(@PathVariable @Positive int id, @RequestBody @Valid UpdateWarehouseDto warehouseDto) {
+        var warehouse = warehouseService.updateWarehouse(id, warehouseDto);
         return ResponseEntity.ok(warehouse);
     }
 

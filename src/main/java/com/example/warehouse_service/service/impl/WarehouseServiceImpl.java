@@ -6,6 +6,9 @@ import com.example.warehouse_service.dto.CreateWarehouseDto;
 import com.example.warehouse_service.dto.UpdateWarehouseDto;
 import com.example.warehouse_service.dto.WarehouseDto;
 import com.example.warehouse_service.mapper.WarehouseMapper;
+import com.example.warehouse_service.message.Message;
+import com.example.warehouse_service.message.enums.ActionType;
+import com.example.warehouse_service.service.WarehouseMessageProducer;
 import com.example.warehouse_service.service.WarehouseService;
 import com.example.warehouse_service.util.errormessage.ErrorMessages;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,6 +23,7 @@ import java.util.List;
 public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseRepository warehouseRepository;
     private final WarehouseMapper mapper;
+    private final WarehouseMessageProducer warehouseMessageProducer;
 
     @Override
     public List<WarehouseDto> getWarehouses(Pageable pageable) {
@@ -35,18 +39,29 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    public WarehouseDto createWarehouse(CreateWarehouseDto warehouseDto) {
-        var warehouse = mapper.toWarehouse(warehouseDto);
-        return mapper.toWarehouseDto(warehouseRepository.save(warehouse));
+    public WarehouseDto createWarehouse(CreateWarehouseDto createWarehouseDto) {
+        var warehouse = mapper.toWarehouse(createWarehouseDto);
+        var savedWarehouse = warehouseRepository.save(warehouse);
+        var warehouseDto = mapper.toWarehouseDto(savedWarehouse);
+        var payload = new Message<>(ActionType.CREATE, warehouseDto);
+
+        warehouseMessageProducer.sentMessage(String.valueOf(savedWarehouse.getId()), payload);
+
+        return warehouseDto;
     }
 
     @Override
-    public WarehouseDto updateWarehouse(int id, UpdateWarehouseDto warehouseDto) {
+    public WarehouseDto updateWarehouse(int id, UpdateWarehouseDto updateWarehouseDto) {
         var warehouse = getWarehouses(id);
-        warehouse.setWarehouseName(warehouseDto.getWarehouseName());
-        warehouse.setWarehouseIdentifier(warehouseDto.getWarehouseIdentifier());
+        warehouse.setWarehouseName(updateWarehouseDto.getWarehouseName());
+        warehouse.setWarehouseIdentifier(updateWarehouseDto.getWarehouseIdentifier());
+        var updatedWarehouse = warehouseRepository.save(warehouse);
+        var warehouseDto = mapper.toWarehouseDto(updatedWarehouse);
+        var payload = new Message<>(ActionType.UPDATE, warehouseDto);
 
-        return mapper.toWarehouseDto(warehouseRepository.save(warehouse));
+        warehouseMessageProducer.sentMessage(String.valueOf(updatedWarehouse.getId()), payload);
+
+        return warehouseDto;
     }
 
     @Override
@@ -56,6 +71,9 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
 
         warehouseRepository.deleteById(id);
+        var payload = new Message<>(ActionType.UPDATE, (WarehouseDto) null);
+
+        warehouseMessageProducer.sentMessage(String.valueOf(id), payload);
     }
 
     private Warehouse getWarehouses(int id) {
