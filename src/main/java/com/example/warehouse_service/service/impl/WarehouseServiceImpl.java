@@ -71,7 +71,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
 
         warehouseRepository.deleteById(id);
-        var payload = new Message<>(ActionType.UPDATE, (WarehouseDto) null);
+        var payload = new Message<>(ActionType.DELETE, (WarehouseDto) null);
 
         warehouseMessageProducer.sentMessage(String.valueOf(id), payload);
     }
