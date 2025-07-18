@@ -4,13 +4,13 @@ services:
   warehouse-service:
     build: .
     ports:
-      - "8083:8083"
+      - "8083:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/warehouse-service
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_APPLICATION_NAME: warehouse-service
-      SERVER_PORT: 8083
+      SERVER_PORT: 8080
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     networks:
       - backend

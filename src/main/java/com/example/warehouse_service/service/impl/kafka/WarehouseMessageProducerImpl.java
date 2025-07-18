@@ -5,6 +5,7 @@ import com.example.warehouse_service.data.enums.MessageStatus;
 import com.example.warehouse_service.data.repository.ProducedMessageRepository;
 import com.example.warehouse_service.dto.WarehouseDto;
 import com.example.warehouse_service.message.Message;
+import com.example.warehouse_service.service.MessageValidatorService;
 import com.example.warehouse_service.service.WarehouseMessageProducer;
 import com.example.warehouse_service.util.kafka.KafkaTopics;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,12 +21,14 @@ public class WarehouseMessageProducerImpl implements WarehouseMessageProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ProducedMessageRepository producedMessageRepository;
     private final ObjectMapper objectMapper;
+    private final MessageValidatorService messageValidatorService;
 
     @Override
     public void sentMessage(String key, Message<WarehouseDto> message) {
         log.info("Sending message with key {} to topic {}", key, KafkaTopics.WAREHOUSES_TOPIC);
         try {
             var payload = objectMapper.writeValueAsString(message);
+            messageValidatorService.validate(KafkaTopics.WAREHOUSES_TOPIC, payload);
             kafkaTemplate.send(KafkaTopics.WAREHOUSES_TOPIC, key, payload).get();
             saveProducedMessage(key, message, MessageStatus.SENT);
         } catch (InterruptedException e) {
